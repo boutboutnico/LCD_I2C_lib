@@ -1,88 +1,105 @@
-//#include "WProgram.h"
+/*************************************************************************//**
+ * @file 	lcd_I2C.cpp
+ * @brief	xx
+ * @author	Nicolas BOUTIN
+ * @date	01/11/2012
+ * @module	LCD_I2C
+ *****************************************************************************/
+
+/*****************************************************************************
+ * INCLUDE
+ *****************************************************************************/
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "LCDI2C.h"
+#include "lcd_I2C.h"
+/*****************************************************************************
+ * GLOBALE VARIABLE
+ *****************************************************************************/
 
-/****************/
-/*    PUBLIC    */
-/****************/
-LCDI2C::LCDI2C(unsigned char LCDaddress, unsigned char nbRow, unsigned char nbColumn)
+/*****************************************************************************
+ * PUBLIC IMPLEMENTATION
+ *****************************************************************************/
+/**
+ *
+ * @param i_ui8_lcd_address
+ * @param i_ui8_nb_row
+ * @param i_ui8_nb_column
+ */
+LCD_I2C::LCD_I2C(uint8_t i_ui8_lcd_address, uint8_t i_ui8_nb_row, uint8_t i_ui8_nb_column)
 {
-	_address = LCDaddress;
-	_maxRow = nbRow;
-	_maxColumn = nbColumn;
-
+	ui8_address = i_ui8_lcd_address;
+	ui8_max_row = i_ui8_nb_row;
+	ui8_max_column = i_ui8_nb_column;
 }
 
-void LCDI2C::begin()
+void LCD_I2C::begin()
 {
-	Wire.begin(_address);
+	Wire.begin(ui8_address);
 	clear();
 }
 
-void LCDI2C::clear()
+void LCD_I2C::clear()
 {
-	Wire.beginTransmission(_address);
+	Wire.beginTransmission(ui8_address);
 	Wire.write(COMMAND);
 	Wire.write(CLEAR);
 	Wire.endTransmission();
 	delay(15);
 }
 
-void LCDI2C::backlight(boolean on)
+void LCD_I2C::backlight(bool i_b_on)
 {
-	Wire.beginTransmission(_address);
+	Wire.beginTransmission(ui8_address);
 	Wire.write(COMMAND);
 
-	if(on) Wire.write(BACKLIGHT_ON);
+	if(i_b_on) Wire.write(BACKLIGHT_ON);
 	else Wire.write(BACKLIGHT_OFF);
 
 	Wire.endTransmission();
 }
 
-void LCDI2C::cursor(boolean on)
+void LCD_I2C::cursor(bool i_b_on)
 {
 
-	Wire.beginTransmission(_address);
+	Wire.beginTransmission(ui8_address);
 	Wire.write(COMMAND);
 
-	if(on) Wire.write(CURSOR_ON);
+	if(i_b_on) Wire.write(CURSOR_ON);
 	else Wire.write(CURSOR_OFF);
 
 	Wire.endTransmission();
 }
 
-void LCDI2C::home()
+void LCD_I2C::home()
 {
-	Wire.beginTransmission(_address);
+	Wire.beginTransmission(ui8_address);
 	Wire.write(COMMAND);
 	Wire.write(HOME);
 	Wire.endTransmission();
 }
 
-void LCDI2C::cursorXY(unsigned char column, unsigned char row)
+void LCD_I2C::cursorXY(uint8_t i_ui8_x, uint8_t i_ui8_y)
 {
+	if(i_ui8_x < 0 || i_ui8_x > ui8_max_column - 1) i_ui8_x = 0;
+	if(i_ui8_y < 0 || i_ui8_y > ui8_max_row - 1) i_ui8_y = 0;
 
-	if(column < 0 || column > _maxColumn - 1) column = 0;
-	if(row < 0 || row > _maxRow - 1) row = 0;
-
-	Wire.beginTransmission(_address);
+	Wire.beginTransmission(ui8_address);
 	Wire.write(COMMAND);
 	Wire.write(CURSOR_POS);
-	Wire.write(column);
-	Wire.write(row);
+	Wire.write(i_ui8_x);
+	Wire.write(i_ui8_y);
 	Wire.endTransmission();
 	delayMicroseconds(100);
 }
 
-void LCDI2C::moveToRow(unsigned char row)
+void LCD_I2C::moveToRow(uint8_t i_ui8_y)
 {
 
-	if(row < 0 || row > _maxRow - 1) row = 0;
+	if(i_ui8_y < 0 || i_ui8_y > ui8_max_row - 1) i_ui8_y = 0;
 
-	Wire.beginTransmission(_address);
-	switch(row){
+	Wire.beginTransmission(ui8_address);
+	switch(i_ui8_y){
 	case 1:
 		Wire.write(ROW_1);
 		break;
@@ -99,62 +116,95 @@ void LCDI2C::moveToRow(unsigned char row)
 	Wire.endTransmission();
 }
 
-void LCDI2C::print(byte b)
+void LCD_I2C::print(byte i_byte_value)
 {
-	Wire.beginTransmission(_address);
-	Wire.write(b);
+	Wire.beginTransmission(ui8_address);
+	Wire.write(i_byte_value);
 	Wire.endTransmission();
 }
 
-void LCDI2C::print(char * string)
+void LCD_I2C::print(const char* i_c8_string)
 {
-	Wire.beginTransmission(_address);
-	Wire.write(string);
+	if(i_c8_string == NULL) return;
+
+	Wire.beginTransmission(ui8_address);
+	Wire.write(i_c8_string);
 	Wire.endTransmission();
 }
 
-void LCDI2C::print(byte * data, byte quantity)
+void LCD_I2C::print(byte * data, byte quantity)
 {
-	Wire.beginTransmission(_address);
+	Wire.beginTransmission(ui8_address);
 	Wire.write(data, quantity);
 	Wire.endTransmission();
 }
 
-void LCDI2C::print(int num)
+/**
+ * @brief	str should be an array long enough to contain any possible value:
+ * 			(sizeof(int)*8+1) for radix=2, i.e. 17 bytes in 16-bits platforms
+ * 			and 33 in 32-bits platforms.
+ *
+ * @param i_ui32_value
+ */
+void LCD_I2C::print(uint32_t i_ui32_value)
 {
-	char string[32]; //Not a good idea
+	char string[ui8_max_column]; //Not a good idea
 
-	itoa(num, string, 10);
+	itoa(i_ui32_value, string, 10);
 	print(string);
-
 }
 
-void LCDI2C::print(unsigned char column, unsigned char row, char * string)
+void LCD_I2C::print(uint8_t i_ui8_x, uint8_t i_ui8_y, const char* i_c8_string)
 {
-	cursorXY(column, row);
-	print(string);
+	cursorXY(i_ui8_x, i_ui8_y);
+	print(i_c8_string);
 }
 
-void LCDI2C::print(unsigned char column, unsigned char row, int num)
+void LCD_I2C::print(uint8_t i_ui8_x, uint8_t i_ui8_y, uint32_t i_ui32_value)
 {
-	cursorXY(column, row);
-	print(num);
+	cursorXY(i_ui8_x, i_ui8_y);
+	print(i_ui32_value);
 }
 
-void LCDI2C::custom(unsigned char code, byte * data)
+void LCD_I2C::printf(char *fmt, ...)
+{
+	char tmp[ui8_max_column]; // resulting string limited to 20 chars
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(tmp, ui8_max_column, fmt, args);
+	va_end(args);
+	print(tmp);
+}
+
+void LCD_I2C::printf(uint8_t i_ui8_x, uint8_t i_ui8_y, char *fmt, ...)
+{
+	cursorXY(i_ui8_x, i_ui8_y);
+
+	char tmp[ui8_max_column+1]; // resulting string limited to 20 chars
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(tmp, ui8_max_column+1, fmt, args);
+	va_end(args);
+	print(tmp);
+}
+
+void LCD_I2C::custom(uint8_t i_ui8_code, byte * i_byte_data)
 {
 
-	if(code < 8 || code > 15) code = 8;
+	if(i_ui8_code < 8 || i_ui8_code > 15) i_ui8_code = 8;
 
-	Wire.beginTransmission(_address);
+	Wire.beginTransmission(ui8_address);
 	Wire.write(COMMAND);
 	Wire.write(CUSTOM_CHAR);
-	Wire.write(code);
-	Wire.write(data, 8);
+	Wire.write(i_ui8_code);
+	Wire.write(i_byte_data, 8);
 	Wire.endTransmission();
 }
 
-/*****************/
-/*    PRIVATE    */
-/*****************/
+/*****************************************************************************
+ * PRIVATE IMPLEMENTATION
+ *****************************************************************************/
 
+/*****************************************************************************
+ * END OF FILE
+ *****************************************************************************/

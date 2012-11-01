@@ -6,12 +6,16 @@
 #ifndef __LCDI2C__
 #define __LCDI2C__
 
-//#include "WProgram.h"
-//#include "wire.h"
-//#include <stdlib.h>
+/*****************************************************************************
+ * INCLUDE
+ *****************************************************************************/
 #include <Arduino.h>
 #include <Wire.h>
+#include <stdarg.h>
 
+/*****************************************************************************
+ * DEFINITION
+ *****************************************************************************/
 #define COMMAND			0x1B
 #define CLEAR			0x43
 #define CURSOR_ON		0x53
@@ -26,32 +30,47 @@
 #define ROW_3			0x03
 #define ROW_4			0x04
 
-class LCDI2C
+/*****************************************************************************
+ * CLASS
+ *****************************************************************************/
+/**
+ * @class 	xx
+ * @brief	xx
+ * @author	boutboutnico
+ * @date	25 juil. 2012
+ */
+class LCD_I2C
 {
+private:
+	uint8_t ui8_address;
+	uint8_t ui8_max_row;
+	uint8_t ui8_max_column;
+
 public:
-	LCDI2C(unsigned char LCDaddress, unsigned char nbRow, unsigned char nbColumn);
+	LCD_I2C(uint8_t i_ui8_lcd_address, uint8_t i_ui8_nb_row, uint8_t i_ui8_nb_column);
 
 	void begin();
 	void clear();
-	void backlight(boolean on);
-	void cursor(boolean on);
+	void backlight(bool i_b_on);
+	void cursor(bool i_b_on);
 	void home();
-	void cursorXY(unsigned char column, unsigned char row);
-	void moveToRow(unsigned char row);
-	void print(byte b);
-	void print(char * string);
-	void print(byte * data, byte quantity);
-	void print(int num);
-	void print(unsigned char column, unsigned char row, char * string);
-	void print(unsigned char column, unsigned char row, int num);
-	void custom(unsigned char code, byte * data);
+	void cursorXY(uint8_t i_ui8_x, uint8_t i_ui8_y);
+	void moveToRow(uint8_t i_ui8_y);
 
-private:
-	unsigned char _address;
-	unsigned char _maxRow;
-	unsigned char _maxColumn;
+	void print(byte i_byte_value);
+	void print(const char* i_c8_string);
+	void print(byte * data, byte quantity);
+	void print(uint32_t i_ui32_value);
+	void print(uint8_t i_ui8_x, uint8_t i_ui8_y, const char* i_c8_string);
+	void print(uint8_t i_ui8_x, uint8_t i_ui8_y, uint32_t i_ui32_value);
+	void printf(char *fmt, ...);
+	void printf(uint8_t i_ui8_x, uint8_t i_ui8_y, char *fmt, ...);
+
+	void custom(uint8_t i_ui8_code, byte * i_byte_data);
 
 };
 
 #endif //__LCDI2C__
-
+/*****************************************************************************
+ * END OF FILE
+ *****************************************************************************/
