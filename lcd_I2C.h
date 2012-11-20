@@ -47,7 +47,7 @@ private:
 	uint8_t ui8_max_column;
 
 public:
-	LCD_I2C(uint8_t i_ui8_lcd_address, uint8_t i_ui8_nb_row, uint8_t i_ui8_nb_column);
+	LCD_I2C(const uint8_t i_ui8_lcd_address, const uint8_t i_ui8_nb_row, const uint8_t i_ui8_nb_column);
 
 	void begin();
 	void clear();

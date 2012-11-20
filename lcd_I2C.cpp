@@ -26,7 +26,7 @@
  * @param i_ui8_nb_row
  * @param i_ui8_nb_column
  */
-LCD_I2C::LCD_I2C(uint8_t i_ui8_lcd_address, uint8_t i_ui8_nb_row, uint8_t i_ui8_nb_column)
+LCD_I2C::LCD_I2C(const uint8_t i_ui8_lcd_address, const uint8_t i_ui8_nb_row, const uint8_t i_ui8_nb_column)
 {
 	ui8_address = i_ui8_lcd_address;
 	ui8_max_row = i_ui8_nb_row;
@@ -180,10 +180,10 @@ void LCD_I2C::printf(uint8_t i_ui8_x, uint8_t i_ui8_y, char *fmt, ...)
 {
 	cursorXY(i_ui8_x, i_ui8_y);
 
-	char tmp[ui8_max_column+1]; // resulting string limited to 20 chars
+	char tmp[ui8_max_column + 1]; // resulting string limited to 20 chars
 	va_list args;
 	va_start(args, fmt);
-	vsnprintf(tmp, ui8_max_column+1, fmt, args);
+	vsnprintf(tmp, ui8_max_column + 1, fmt, args);
 	va_end(args);
 	print(tmp);
 }
