@@ -9,9 +9,10 @@
 /*****************************************************************************
  * INCLUDE
  *****************************************************************************/
-#include <Arduino.h>
-#include <Wire.h>
-#include <stdarg.h>
+#include "Arduino.h"
+#include "Wire.h"
+
+#include "stdarg.h"
 
 /*****************************************************************************
  * DEFINITION
@@ -63,6 +64,7 @@ public:
 	void print(uint32_t i_ui32_value);
 	void print(uint8_t i_ui8_x, uint8_t i_ui8_y, const char* i_c8_string);
 	void print(uint8_t i_ui8_x, uint8_t i_ui8_y, uint32_t i_ui32_value);
+	
 	void printf(char *fmt, ...);
 	void printf(uint8_t i_ui8_x, uint8_t i_ui8_y, char *fmt, ...);
 

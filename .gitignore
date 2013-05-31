@@ -28,6 +28,11 @@ local.properties
 # PDT-specific
 .buildpath
 
+#################
+## Atmel Visual
+#################
+Visual Micro/
+*.cppproj
 
 #################
 ## Visual Studio
