@@ -12,6 +12,6 @@ Arduino Uno R3
 
 For details about the code and how to use it, please visit : 
 http://playground.arduino.cc//Main/LCDI2C
-Video demo : http://youtu.be/zqLFZlWFROQ
+Video demo : http://www.youtube.com/watch?v=zqLFZlWFROQ
 
 Feel free to ask for help or to suggest improvement...
